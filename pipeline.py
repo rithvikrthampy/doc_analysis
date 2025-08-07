@@ -42,10 +42,9 @@ def rotation_ccw_deg_from_quad(quad: np.ndarray) -> float:
 class DocumentProcessor:
     def __init__(self, rembg_model: str = "isnet-general-use"):
         self.rembg_model = rembg_model
-        self._session = new_session(model_name=rembg_model, providers=["CPUExecutionProvider"])
+        self._session = new_session(model_name=rembg_model, providers=["DmlExecutionProvider", "CPUExecutionProvider"])
     
     def rembg_alpha(self, bgr: np.ndarray, tag: str) -> np.ndarray:
-        """Return a cleaned binary mask (255=FG) from rembg."""
         t0 = time.perf_counter()
         ok, buf = cv2.imencode(".png", bgr)
         rgba_bytes = remove(buf.tobytes(), session=self._session)
@@ -158,7 +157,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--input", required=True, help="image file or directory")
     ap.add_argument("--rembg-model", default="isnet-general-use",
-                    help="rembg model name (default: isnet-general-use), e.g., u2net")
+                    help="rembg model name (default: isnet-general-use) or u2net")
     args = ap.parse_args()
 
     print(f"[rembg] using model: {args.rembg_model}")

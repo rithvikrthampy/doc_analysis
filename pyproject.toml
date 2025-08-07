@@ -20,6 +20,7 @@ dependencies = [
     "fastapi (>=0.104.0,<1.0.0)",
     "uvicorn[standard] (>=0.24.0,<1.0.0)",
     "python-multipart (>=0.0.6,<1.0.0)",
+    "onnxruntime-directml (>=1.22.0,<2.0.0)",
 ]
 
 [tool.poetry]

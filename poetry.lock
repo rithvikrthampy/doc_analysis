@@ -661,6 +661,28 @@ protobuf = "*"
 sympy = "*"
 
 [[package]]
+name = "onnxruntime-directml"
+version = "1.22.0"
+description = "ONNX Runtime is a runtime accelerator for Machine Learning models"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+files = [
+    {file = "onnxruntime_directml-1.22.0-cp310-cp310-win_amd64.whl", hash = "sha256:1eddf2d05b6f28efa529e704c6cf515331df8ee84fd293e055e4a9a99a3ab51d"},
+    {file = "onnxruntime_directml-1.22.0-cp311-cp311-win_amd64.whl", hash = "sha256:4c611cb4b8588356eef4c02552e0a50117d558223dcfbdfe1b30b413e9a6feb0"},
+    {file = "onnxruntime_directml-1.22.0-cp312-cp312-win_amd64.whl", hash = "sha256:f8fc1a48b7fb134e34f8f138719a27d1bf6895611728b593fd86bc7c05b848a1"},
+    {file = "onnxruntime_directml-1.22.0-cp313-cp313-win_amd64.whl", hash = "sha256:35cde5043450cab642ac71a1ec7bded58e5ed5dcc867930a179cc48a501af235"},
+]
+
+[package.dependencies]
+coloredlogs = "*"
+flatbuffers = "*"
+numpy = ">=1.21.6"
+packaging = "*"
+protobuf = "*"
+sympy = "*"
+
+[[package]]
 name = "onnxruntime-gpu"
 version = "1.22.0"
 description = "ONNX Runtime is a runtime accelerator for Machine Learning models"
@@ -1945,4 +1967,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.14"
-content-hash = "0830de829f6e4f1ff33d91847663b86655df04d1f2e2208f60f4cfae807c7b90"
+content-hash = "6bc4067adee70159f5016635d546f7ffc34344c6ad7e5d1be0355587fc36fdde"
