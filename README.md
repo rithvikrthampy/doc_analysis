@@ -65,3 +65,34 @@ doc_analysis/
 | **python-multipart** | Multipart file uploads |
 
 ---
+
+## Approach & Design Rationale  
+
+- **End-to-end flow**  
+  - *Segmentation* — `rembg` with the **IS-Net (“isnet-general-use”)** model isolates the document from any background.  
+  - *Largest foreground contour* — the biggest connected component is convex-hulled, and `cv2.minAreaRect` fits a rotated box around it.  
+  - *Perspective warp* — those four corners are mapped to an upright rectangle via `cv2.getPerspectiveTransform` + `warpPerspective`, removing the dominant skew.  
+  - *Edge snap* — a light Sobel projection trims 1–20 px slivers so the crop hugs the real edges.  
+  - *White padding* — a 1.5 % border is added with `cv2.copyBorder` for a clean margin.  
+  - *Output* — the final PNG is saved to `temp_output/`, base-64 encoded, and the geometric rotation angle (`angle_deg`, CCW-positive) is returned.
+
+- **Pre-processing specifics**  
+  - Alpha from `rembg` is thresholded (`alpha > 0`), closed, and median-blurred to remove pinholes and edge fuzz.  
+  - A single **DirectML GPU session** is created on startup (`["DmlExecutionProvider", "CPUExecutionProvider"]`) for speed; CPU fallback gives identical results.  
+  - Warp destination size equals the longer side of the rotated box, preserving resolution.  
+  - `angle_deg` is taken from the top edge of the quad, normalised to (-90°, 90°], then negated to reflect the correction applied.
+
+- **Why a single `rembg` stage and no OCR deskew**  
+  - One strong segmentation model copes with hands, shadows, and coloured tables consistently.  
+  - Geometric warp removes skew without reading any text, so language and font are irrelevant.  
+  - Latency stays below one second on consumer GPUs for 3-4 MP photos, meeting the assessment budget.
+
+- **Libraries used**  
+  - **rembg** — foreground segmentation.  
+  - **onnxruntime-directml** (Windows) or **onnxruntime** (CPU) — runs the IS-Net ONNX model.  
+  - **opencv-python-headless** — geometry, warp, edge trim, PNG encode.  
+  - **numpy** — vector maths and angle calculations.  
+  - **Pillow** — converts the RGBA output of `rembg` into NumPy.  
+  - **fastapi** — REST endpoints (`/process/single`, `/process/multiple`).  
+  - **uvicorn[standard]** — production ASGI server.  
+  - **python-multipart** — handles image uploads for FastAPI.
